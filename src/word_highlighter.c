@@ -25,15 +25,34 @@ ScintillaObject *sci;
 
 PLUGIN_VERSION_CHECK(211)
 
-PLUGIN_SET_INFO("Word Highlighter", "Finds and highlights matching \
-                words", "1.0", 
+PLUGIN_SET_INFO("Word Highlighter", "Finds and highlights matching words in editor", "1.0", 
                 "Rishikesh Jha <techierishi@gmail.com>");
 
 
+/* Searches matching word and.
+ * highlight them all
+ * 
+ */
 
-/* The intensity of each colour is set in the range 0 to 255.
- * If you have three such intensities, they are combined as:
- * red | (green << 8) | (blue << 16)*/
+void dbgg(gchar* *gch){
+
+
+FILE *f = fopen("/home/techierishi/dbgg.txt", "a");
+if (f == NULL)
+{
+    printf("Error opening file!\n");
+    exit(1);
+}
+
+fprintf(f, "Some text: %s\n", *gch);
+
+
+
+fclose(f);
+
+
+}
+
 unsigned long createRGB(int r, int g, int b)
 {
     return ((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff);
@@ -52,15 +71,21 @@ void highlight_word(gint openingBracket, gint closingBracket)
 }
 
 
+
+
+
 void run_word_highlighter(void)
 {
     gint position = sci_get_current_position(sci);
     gint lineNumber = sci_get_current_line(sci);
     gint lineStart = sci_get_position_from_line(sci, lineNumber);
     gint lineEnd = sci_get_line_end_position(sci, lineNumber);
-   
 
-    
+    gchar* gc  = sci_get_selection_contents(sci);
+
+	dbgg(&gc);
+    //highlight_word(openingBracket, closingBracket);
+
 }
 
 
@@ -74,6 +99,9 @@ static gboolean on_editor_notify(GObject *obj, GeanyEditor *editor,
     sci = editor->sci;
 
     scintilla_send_message(sci, SCI_SETINDICATORCURRENT, INDICATOR_TAGMATCH, 0);
+
+    lexer = sci_get_lexer(sci);
+   
 
     /* nmhdr is a structure containing information about the event */
     switch (nt->nmhdr.code)
