@@ -1,6 +1,6 @@
 CC=gcc
 
-TARGET=pair_tag_highlighter
+TARGET=word_highlighter
 LIBDIR=/usr/lib/x86_64-linux-gnu/geany
 SRCDIR=src
 SOURCES=$(SRCDIR)/$(TARGET).c
