@@ -1,10 +1,10 @@
 /*
- * Pair Tag Highlighter
+ * Word Highlighter
  *
- * highlights matching opening/closing HTML tags
+ * highlights matching word 
  *
- * Author:  Volodymyr Kononenko aka kvm
- * Email:   vm@kononenko.ws
+ * Author:  techierishi
+ * Email:   techierishi@gmail.com
  *
  */
 
@@ -58,8 +58,12 @@ unsigned long createRGB(int r, int g, int b)
     return ((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff);
 }
 
+void clear_previous_highlighting(gint rangeStart, gint rangeEnd)
+{
+    scintilla_send_message(sci, SCI_INDICATORCLEARRANGE, rangeStart, rangeEnd+1);
+}
 
-void highlight_word(gint openingBracket, gint closingBracket)
+void highlight_word(gint clolumnStart, gint clolumnEnd)
 {
     scintilla_send_message(sci, SCI_INDICSETSTYLE,
                             INDICATOR_TAGMATCH, INDIC_ROUNDBOX);
@@ -67,7 +71,7 @@ void highlight_word(gint openingBracket, gint closingBracket)
                             0, createRGB(0, 208, 0)); // green #00d000
     scintilla_send_message(sci, SCI_INDICSETALPHA, INDICATOR_TAGMATCH, 60);
     scintilla_send_message(sci, SCI_INDICATORFILLRANGE,
-                            openingBracket, closingBracket-openingBracket+1);
+                            clolumnStart, clolumnEnd-clolumnStart+1);
 }
 
 
@@ -82,8 +86,10 @@ void run_word_highlighter(void)
     gint lineEnd = sci_get_line_end_position(sci, lineNumber);
 
     gchar* gc  = sci_get_selection_contents(sci);
-
+    
+    gint strtpos = sci_get_current_position(sci);
 	dbgg(&gc);
+	highlight_word(strtpos,100);
     //highlight_word(openingBracket, closingBracket);
 
 }
